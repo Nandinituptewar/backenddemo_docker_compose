@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+
+ mysqldb:
+   image: mysql:5.7
+   #restart: unless-stopped
+   container_name: mysqldb
+   env_file: ./.env
+   environment:
+     - MYSQL_DATABASE=products
+     - MYSQL_ROOT_PASSWORD=nandu@123
+     - MYSQL_USER=user_1
+     - MYSQL_PASSWORD=nandu@123
+
+   ports:
+     - 3308:3306
+   networks:
+        - dbnet1
+   tty: true
+   #volumes:
+    # - mysqldb:/var/lib/mysql 
+
+ mongodb:
+    image: mongo
+    restart: unless-stopped
+    container_name: mongodb_container
+    env_file: ./.env
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+    volumes:
+      - mongodb:/data/db
+
+ app:
+    build: . 
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    depends_on:
+      - mysqldb
+      - mongodb
+      
+
+volumes: 
+  mysqldb:
+  mongodb:
+  
